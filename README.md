@@ -1,15 +1,15 @@
 # RADIO-BOTS-DISCORD.JS
 
-A live radio bot to keep it the server little attractive and flexible.
+A live radio bot to keep the server little attractive and flexible.
 
 
-Just set Few things in code 
+Just set few things up in the code 
 
 ![image](https://user-images.githubusercontent.com/78467470/133436619-dfba4ad3-de6b-46db-af85-c3d544e3dab6.png)
  
  # Log channels
  
- For simple Greeting message when a user join join vc along with the bot.
+ For a simple nice greeting message, when a user join vc along with the bot.
  
  # Voice channel
  
@@ -23,4 +23,5 @@ Just set Few things in code
  
  # ABOUT ME
  
- A normal youtube, developer, graphic designer. You can join my server https://discord.gg/bY9BV3dTxh
+ A casual youtuber, developer, graphic designer or you can say these are my hobbies.
+ Join my server https://discord.gg/bY9BV3dTxh
