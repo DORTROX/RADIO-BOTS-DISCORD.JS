@@ -5,17 +5,15 @@ A live radio bot to keep the server little attractive and flexible.
 
 Just set few things up in the code 
 
-![image](https://user-images.githubusercontent.com/78467470/133436619-dfba4ad3-de6b-46db-af85-c3d544e3dab6.png)
+![image](https://user-images.githubusercontent.com/78467470/150668235-36c9845a-c9dd-48db-9ade-9cf1e2a78c1f.png)
  
- # Log channels
- 
- For a simple nice greeting message, when a user join vc along with the bot.
+ # MongoDB
+ Paste your mongoDB cluster link here. 
+ ![image](https://user-images.githubusercontent.com/78467470/150668118-36a71c2f-10a6-4ed3-b4ab-5166b6be5f13.png)
  
  # Voice channel
  
- The one you prefer to keep Active for radio.
- 
- ![image](https://user-images.githubusercontent.com/78467470/133437154-586dcdd5-b0fb-4ca2-9fd9-f38affdee3f7.png)
+ You will get a ping for setup procedure.
  
  # Link
  
