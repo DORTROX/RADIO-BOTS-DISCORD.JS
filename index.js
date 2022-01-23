@@ -15,15 +15,16 @@ const ani = require('./schema/NfsGuildSchema')
 
 const radio = new Discord.Client()
 
-const log = ""
-const link = "https://www.youtube.com/watch?v=7G7umMPwlO4"
+const log = "";
+const link = "https://www.youtube.com/watch?v=7G7umMPwlO4";
+const mongodburi = "Your mongoose cluster link here"
 
 const reset = new Discord.MessageEmbed()
   .setColor('ORANGE')
   .setTitle('Restarting Song...')
   .setFooter('A bot by DORTROX-');
 
-mongoose.connect(process.env.mongodburi, {
+mongoose.connect(mongodburi, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
