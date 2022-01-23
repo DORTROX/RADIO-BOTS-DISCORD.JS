@@ -1,23 +1,29 @@
 {
   "name": "RADIO",
   "version": "1.0.0",
-  "description": "A 24/7 radio bot created with JS and MongoDB by DORTROX.",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": {
+    "name": "DORTROX",
+    "email": "dortrox.1@gmail.com",
+    "url": "https://www.youtube.com/c/DORTROXGAMING"
+  },
   "license": "ISC",
   "dependencies": {
     "@discordjs/opus": "^0.5.3",
+    "discord-reply": "^0.1.2",
     "discord.js": "^12.5.3",
     "express": "^4.17.1",
     "ffmpeg": "0.0.4",
     "ffmpeg-static": "^4.4.0",
+    "mongoose": "^6.1.5",
     "opusscript": "0.0.8",
     "pm": "^2.2.6",
     "pm2": "^5.1.0",
-    "ytdl-core": "^4.9.0"
+    "ytdl-core": "^4.9.1"
   }
 }
