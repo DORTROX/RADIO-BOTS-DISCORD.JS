@@ -20,8 +20,3 @@ Just set few things up in the code
  # Link
  
  Link of the youtube live video you want to play.
- 
- # ABOUT ME
- 
- A casual youtuber, developer, graphic designer or you can say these are my hobbies.
- Join my server https://discord.gg/bY9BV3dTxh
