@@ -15,7 +15,7 @@ const ani = require('./schema/NfsGuildSchema')
 
 const radio = new Discord.Client()
 
-const log = "899000759356653618"
+const log = ""
 const link = "https://www.youtube.com/watch?v=7G7umMPwlO4"
 
 const reset = new Discord.MessageEmbed()
