@@ -15,16 +15,16 @@ const ani = require('./schema/NfsGuildSchema')
 
 const radio = new Discord.Client()
 
+const mongodburi = "Your cluster link here"
 const log = "";
 const link = "https://www.youtube.com/watch?v=7G7umMPwlO4";
-const mongodburi = "Your mongoose cluster link here"
 
 const reset = new Discord.MessageEmbed()
   .setColor('ORANGE')
   .setTitle('Restarting Song...')
   .setFooter('A bot by DORTROX-');
 
-mongoose.connect(mongodburi, {
+mongoose.connect(process.env.mongodburi, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
@@ -65,45 +65,47 @@ radio.on("guildDelete", async (guild) => {
   const guildID = guild.id;
   await ani.findOneAndDelete({ guildID: guildID });
 })
-    const prefix = "$Nlive";
-  radio.on("message", async message => {
-        if (!message.content.startsWith(prefix)) return;
-    const args = message.content
-      .slice(prefix.length)
-      .trim()
-      .split(/ +/g);
-      const index = message.content.indexOf(" ");
-      const vcid = message.content.slice(index + 1);
-      const doc = await ani.findOne({ guildID: message.guild.id });
-      try {
-        const update = { vcID: vcid };
-        await doc.updateOne(update);
-        message.lineReply("Your vc setup is successfully completed!");
-      } catch (err) {
-        console.log(err);
-        message.lineReply("Setup cancelled")
+const prefix = "$Nlive";
+radio.on("message", async message => {
+  if (!message.content.startsWith(prefix)) return;
+  const args = message.content
+    .slice(prefix.length)
+    .trim()
+    .split(/ +/g);
+  const index = message.content.indexOf(" ");
+  const vcid = message.content.slice(index + 1);
+  const doc = await ani.findOne({ guildID: message.guild.id });
+  try {
+    const update = { vcID: vcid };
+    await doc.updateOne(update);
+    message.lineReply("Your vc setup is successfully completed!");
+  } catch (err) {
+    console.log(err);
+    message.lineReply("Setup cancelled")
+  }
+  const loc = await ani.findOne({ guildID: message.guild.id });
+  radio.channels.cache.get(loc.vcID).join().then(connection => {
+    function play(connection) {
+      connection.voice.setSelfDeaf(true);
+      const stream = ytdl(link, { filter: "audio" })
+      const dispatcher = connection.play(stream)
+      dispatcher.on("finish", () => {
+        play(connection)
+      })
+    }
+    play(connection)
+  }).catch(e => {
+    const error = new Discord.MessageEmbed()
+      .setColor('RED')
+      .setTitle('Error Table')
+      .setDescription('```js\n' + e + '\n```')
+      .setFooter(`${radio.user.tag}`);
+      if (log){
+    radio.channels.cache.get(log).send(error)
       }
-            const loc = await ani.findOne({ guildID: message.guild.id });
-        radio.channels.cache.get(loc.vcID).join().then(connection => {
-      function play(connection) {
-        connection.voice.setSelfDeaf(true);
-        const stream = ytdl(link, { filter: "audio" })
-        const dispatcher = connection.play(stream)
-        dispatcher.on("finish", () => {
-          play(connection)
-        })
-      }
-      play(connection)
-    }).catch(e => {
-      const error = new Discord.MessageEmbed()
-        .setColor('RED')
-        .setTitle('Error Table')
-        .setDescription('```js\n' + e + '\n```')
-        .setFooter(`${radio.user.tag}`);
-      radio.channels.cache.get(log).send(error)
-    })
-      
   })
+
+})
 radio.on("ready", async () => {
   console.log(`Logged in as ${radio.user.tag}`)
   radio.user.setActivity("NFS MUSIC", {
@@ -117,7 +119,7 @@ radio.on("ready", async () => {
   }
 
   for (let i = 0; i < arr.length; i++) {
-    if(arr[i] === "null") return;
+    if (arr[i] === "null") return;
     radio.channels.cache.get(arr[i]).join().then(connection => {
       function play(connection) {
         connection.voice.setSelfDeaf(true);
@@ -134,9 +136,45 @@ radio.on("ready", async () => {
         .setTitle('Error Table')
         .setDescription('```js\n' + e + '\n```')
         .setFooter(`${radio.user.tag}`);
+        if (log){
       radio.channels.cache.get(log).send(error)
+        }
     })
   };
+  //         radio.on('voiceStateUpdate', (oldState, newState) => {
+
+  // //If a user join vc user will get a greeting message in log channel.
+  //       let name = newState.id;
+  //             if(newState.channelID == vc) {
+  //       radio.channels.cache.get(log).send(`Thanks for joining <@${name}>. I hope you enjoy`)
+  // }
+
+
+  // //Prolly useless but prefer keeping it If a new user join channel Bot will start playing song.
+  //     if (oldState.member.user.bot) return;
+  //     if (oldState.member.user) return;
+  //         voiceChannel.join().then(connection => {
+  //         console.log("Joined voice channel")
+  //         function play(connection) {
+  //             connection.voice.setSelfDeaf(true);
+  //             const stream = ytdl(link, { filter: "audio" })
+  //             const dispatcher = connection.play(stream)
+  //             dispatcher.on("finish", () => {
+  //                 play(connection)
+  //                 radio.channels.cache.get(log).send(reset)
+  //             })
+  //         }
+  //         play(connection)
+  //     }).catch(e => {
+  //         const error = new Discord.MessageEmbed()
+  //             .setColor('RED')
+  //             .setTitle('Error Table')
+  //             .setDescription('```js\n' + e + '\n```')
+  //    	    .setFooter('DORTROX');
+  //         radio.channels.cache.get(log).send(error)
+  //     });
+
+  // })
 })
 
 radio.login(process.env.token);
