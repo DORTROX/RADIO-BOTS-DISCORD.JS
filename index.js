@@ -8,80 +8,134 @@ app.listen(port, () => console.log(`Example app listening at http://localhost:${
 
 const Discord = require("discord.js")
 const ytdl = require("ytdl-core")
+const mongoose = require('mongoose');
+const disord = require('discord-reply');
+const ani = require('./schema/NfsGuildSchema')
+
 
 const radio = new Discord.Client()
 
-const log = "Log id (If you want)"
-const vc = "Voice Channel ID"
-const link = "Youtube Video Link"
-const token = ""
+const log = "899000759356653618"
+const link = "https://www.youtube.com/watch?v=7G7umMPwlO4"
 
+const reset = new Discord.MessageEmbed()
+  .setColor('ORANGE')
+  .setTitle('Restarting Song...')
+  .setFooter('A bot by DORTROX-');
 
-// play song as soon as bot come online
-radio.on("ready", () => {
-    console.log(`Logged in as ${radio.user.tag}`)
-    const voiceChannel = radio.channels.cache.get(vc)
-    radio.user.setPresence({
-        status: 'dnd',
-        activity: {
-            name: 'Music',
-            type: 'LISTENING',
-        }
+mongoose.connect(process.env.mongodburi, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+  .then((m) => {
+    console.log("Connected to DB");
+  })
+  .catch((err) => console.log(err));
+
+radio.on('guildCreate', async (guild) => {
+  let defaultChannel = "";
+  guild.channels.cache.forEach((channel) => {
+    if (channel.type == "text" && defaultChannel == "") {
+      if (channel.permissionsFor(guild.me).has("SEND_MESSAGES")) {
+        defaultChannel = channel;
+      }
+    }
+  })
+  //defaultChannel will be the channel object that it first finds the bot has permissions for
+  defaultChannel.send(`Hello @everyone, I'm NFS Live. Thanks for inviting me, Use $Nlive "voiceChannel_id" to set me up`, {
+    embed: {
+      title: 'Our Server',
+      url: 'https://discord.gg/SM22ddTSRr',
+      color: 0x2471a3,
+      description: "If need any help or wanna help us on other projects then join our server. ",
+
+      footer: {
+        text: 'D O R T R O 乂.'
+      }
+    }
+  });
+  const guildID = guild.id;
+  ani.create({
+    vcID: 'null',
+    guildID: guildID,
+  });
+});
+radio.on("guildDelete", async (guild) => {
+  const guildID = guild.id;
+  await ani.findOneAndDelete({ guildID: guildID });
+})
+    const prefix = "$Nlive";
+  radio.on("message", async message => {
+        if (!message.content.startsWith(prefix)) return;
+    const args = message.content
+      .slice(prefix.length)
+      .trim()
+      .split(/ +/g);
+      const index = message.content.indexOf(" ");
+      const vcid = message.content.slice(index + 1);
+      const doc = await ani.findOne({ guildID: message.guild.id });
+      try {
+        const update = { vcID: vcid };
+        await doc.updateOne(update);
+        message.lineReply("Your vc setup is successfully completed!");
+      } catch (err) {
+        console.log(err);
+        message.lineReply("Setup cancelled")
+      }
+            const loc = await ani.findOne({ guildID: message.guild.id });
+        radio.channels.cache.get(loc.vcID).join().then(connection => {
+      function play(connection) {
+        connection.voice.setSelfDeaf(true);
+        const stream = ytdl(link, { filter: "audio" })
+        const dispatcher = connection.play(stream)
+        dispatcher.on("finish", () => {
+          play(connection)
+        })
+      }
+      play(connection)
+    }).catch(e => {
+      const error = new Discord.MessageEmbed()
+        .setColor('RED')
+        .setTitle('Error Table')
+        .setDescription('```js\n' + e + '\n```')
+        .setFooter(`${radio.user.tag}`);
+      radio.channels.cache.get(log).send(error)
     })
-    voiceChannel.join().then(connection => {
-        console.log("Joined voice channel")
-        function play(connection) {
-            connection.voice.setSelfDeaf(true);
-            const stream = ytdl(link, { filter: "audio" })
-            const dispatcher = connection.play(stream)
-            dispatcher.on("finish", () => {
-                play(connection)
-                radio.channels.cache.get(log).send(reset)
-            })
-        }
-        play(connection)
+      
+  })
+radio.on("ready", async () => {
+  console.log(`Logged in as ${radio.user.tag}`)
+  radio.user.setActivity("NFS MUSIC", {
+    type: "STREAMING",
+    url: "https://www.twitch.tv/dortrox"
+  });
+  const guilds = await ani.find();
+  let arr = [];
+  for (const i in guilds) {
+    let pft = arr.push(guilds[i].vcID)
+  }
+
+  for (let i = 0; i < arr.length; i++) {
+    if(arr[i] === "null") return;
+    radio.channels.cache.get(arr[i]).join().then(connection => {
+      function play(connection) {
+        connection.voice.setSelfDeaf(true);
+        const stream = ytdl(link, { filter: "audio" })
+        const dispatcher = connection.play(stream)
+        dispatcher.on("finish", () => {
+          play(connection)
+        })
+      }
+      play(connection)
     }).catch(e => {
-        const error = new Discord.MessageEmbed()
-            .setColor('RED')
-            .setTitle('Error Table')
-            .setDescription('```js\n' + e + '\n```')
-   	    .setFooter(`${radio.user.tag}`);
-        radio.channels.cache.get(log).send(error)
-    });
-        radio.on('voiceStateUpdate', (oldState, newState) => {
-
-//If a user join vc user will get a greeting message in log channel.
-      let name = newState.id;
-            if(newState.channelID == vc) {
-      radio.channels.cache.get(log).send(`Thanks for joining <@${name}>. I hope you enjoy`)
-}
-
-          
-//Prolly useless but prefer keeping it If a new user join channel Bot will start playing song.
-    if (oldState.member.user.bot) return;
-    if (oldState.member.user) return;
-        voiceChannel.join().then(connection => {
-        console.log("Joined voice channel")
-        function play(connection) {
-            connection.voice.setSelfDeaf(true);
-            const stream = ytdl(link, { filter: "audio" })
-            const dispatcher = connection.play(stream)
-            dispatcher.on("finish", () => {
-                play(connection)
-                radio.channels.cache.get(log).send(reset)
-            })
-        }
-        play(connection)
-    }).catch(e => {
-        const error = new Discord.MessageEmbed()
-            .setColor('RED')
-            .setTitle('Error Table')
-            .setDescription('```js\n' + e + '\n```')
-   	    .setFooter('DORTROX');
-        radio.channels.cache.get(log).send(error)
-    });
-
-})
+      const error = new Discord.MessageEmbed()
+        .setColor('RED')
+        .setTitle('Error Table')
+        .setDescription('```js\n' + e + '\n```')
+        .setFooter(`${radio.user.tag}`);
+      radio.channels.cache.get(log).send(error)
+    })
+  };
 })
 
-radio.login(process.env.token || token);
+radio.login(process.env.token);
